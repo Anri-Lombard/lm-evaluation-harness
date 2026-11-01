@@ -279,12 +279,15 @@ def options_consistency_rate(results: list[dict[str, Any]], labels) -> float:
             always_same_option,
             final_answer,
             original_answer_index,
-            _answer_index,
+            answer_index,
         ) = result
-        if final_answer == labels[original_answer_index]:
-            final_answer = always_same_option
-        elif final_answer == always_same_option:
-            final_answer = labels[original_answer_index]
+        # A copy whose label is past the question's options keeps the original
+        # order, so only swapped copies map back.
+        if answer_index[0] == labels.index(always_same_option):
+            if final_answer == labels[original_answer_index]:
+                final_answer = always_same_option
+            elif final_answer == always_same_option:
+                final_answer = labels[original_answer_index]
         if question_id not in question_answers_dict:
             question_answers_dict[question_id] = []
         question_answers_dict[question_id].append(final_answer)
